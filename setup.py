@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 
-import json
 import os
-import sys
 import shutil
+import sys
+import json
 
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from setuptools.command.install import install
-from setuptools.command.sdist import sdist
 
 import pyct.build
 
 setup_args = {}
+
 install_requires = [
     'param >=1.9.3,<2.0',
     'numpy >=1.0',
