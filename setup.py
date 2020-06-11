@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import os
-import shutil
-import sys
 import json
+import os
+import sys
+import shutil
 
 from setuptools import setup, find_packages
 
