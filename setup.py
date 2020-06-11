@@ -9,81 +9,7 @@ from setuptools import setup, find_packages
 
 import pyct.build
 
-def get_setup_version(reponame):
-    """
-    Helper to get the current version from either git describe or the
-    .version file (if available).
-    """
-    basepath = os.path.split(__file__)[0]
-    version_file_path = os.path.join(basepath, reponame, '.version')
-    try:
-        from param import version
-    except Exception:
-        version = None
-    if version is not None:
-        return version.Version.setup_version(basepath, reponame, archive_commit="$Format:%h$")
-    else:
-        print("WARNING: param>=1.6.0 unavailable. If you are installing a package, "
-              "this warning can safely be ignored. If you are creating a package or "
-              "otherwise operating in a git repository, you should install param>=1.6.0.")
-        return json.load(open(version_file_path, 'r'))['version_string']
-
-
-def _build_paneljs():
-    from bokeh.ext import build
-    print("Building custom models:")
-    panel_dir = os.path.join(os.path.dirname(__file__), "panel")
-    build(panel_dir)
-
-
-class CustomDevelopCommand(develop):
-    """Custom installation for development mode."""
-
-    def run(self):
-        _build_paneljs()
-        develop.run(self)
-
-
-class CustomInstallCommand(install):
-    """Custom installation for install mode."""
-
-    def run(self):
-        _build_paneljs()
-        install.run(self)
-
-
-class CustomSdistCommand(sdist):
-    """Custom installation for sdist mode."""
-
-    def run(self):
-        _build_paneljs()
-        sdist.run(self)
-
-
-_COMMANDS = {
-    'develop': CustomDevelopCommand,
-    'install': CustomInstallCommand,
-    'sdist':   CustomSdistCommand,
-}
-
-try:
-    from wheel.bdist_wheel import bdist_wheel
-
-    class CustomBdistWheelCommand(bdist_wheel):
-        """Custom bdist_wheel command to force cancelling qiskit-terra wheel
-        creation."""
-
-        def run(self):
-            """Do nothing so the command intentionally fails."""
-            _build_paneljs()
-            bdist_wheel.run(self)
-
-    _COMMANDS['bdist_wheel'] = CustomBdistWheelCommand
-except Exception:
-    pass
-
-########## dependencies ##########
-
+# setup_args = {}
 install_requires = [
     'param >=1.9.3,<2.0',
     'numpy >=1.0',
@@ -185,61 +111,86 @@ extras_require['build'] = [
 # Everything including cyordereddict (optimization) and nosetests
 extras_require['all'] = list(set(extras_require['unit_tests']) | set(extras_require['nbtests']))
 
-setup_args = dict(
-    name='panel',
-    version=get_setup_version("panel"),
-    description='A high level app and dashboarding solution for Python.',
-    long_description=open('README.md').read() if os.path.isfile('README.md') else 'Consult README.md',
+
+def get_setup_version(reponame):
+    """
+    Helper to get the current version from either git describe or the
+    .version file (if available).
+    """
+    basepath = os.path.split(__file__)[0]
+    version_file_path = os.path.join(basepath, reponame, '.version')
+    try:
+        from param import version
+    except:
+        version = None
+    if version is not None:
+        return version.Version.setup_version(basepath, reponame, archive_commit="$Format:%h$")
+    else:
+        print("WARNING: param>=1.6.0 unavailable. If you are installing a package, this warning can safely be ignored. If you are creating a package or otherwise operating in a git repository, you should install param>=1.6.0.")
+        return json.load(open(version_file_path, 'r'))['version_string']
+
+setup_args.update(dict(
+    name='holoviews',
+    version=get_setup_version("holoviews"),
+    python_requires=">=2.7",
+    install_requires=install_requires,
+    extras_require=extras_require,
+    description='Stop plotting your data - annotate your data and let it visualize itself.',
+    long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="HoloViz",
-    author_email="developers@holoviz.org",
-    maintainer="HoloViz",
-    maintainer_email="developers@holoviz.org",
+    author="Jean-Luc Stevens and Philipp Rudiger",
+    author_email="holoviews@gmail.com",
+    maintainer="PyViz Developers",
+    maintainer_email="developers@pyviz.org",
     platforms=['Windows', 'Mac OS X', 'Linux'],
     license='BSD',
-    url='http://panel.holoviz.org',
-    cmdclass=_COMMANDS,
+    url='https://www.holoviews.org',
+    entry_points={
+        'console_scripts': [
+            'holoviews = holoviews.util.command:main'
+        ]},
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
+        "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
-        "Intended Audience :: Financial and Insurance Industry",
-        "Intended Audience :: Healthcare Industry",
-        "Intended Audience :: Information Technology",
-        "Intended Audience :: Legal Industry",
-        "Intended Audience :: Other Audience",
-        "Intended Audience :: Science/Research",
         "Natural Language :: English",
+        "Framework :: Matplotlib",
         "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Visualization",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Office/Business",
-        "Topic :: Office/Business :: Financial",
-        "Topic :: Software Development :: Libraries"],
-    python_requires=">=3.6",
-    entry_points={
-        'console_scripts': [
-            'panel = panel.cli:main'
-        ]},
-    install_requires=install_requires,
-    extras_require=extras_require,
-    tests_require=extras_require['tests']
-)
+        "Topic :: Software Development :: Libraries"]
+))
+
 
 if __name__ == "__main__":
     example_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'panel', 'examples')
+                                'holoviews/examples')
 
     if 'develop' not in sys.argv and 'egg_info' not in sys.argv:
         pyct.build.examples(example_path, __file__, force=True)
+
+    if 'install' in sys.argv:
+        header = "HOLOVIEWS INSTALLATION INFORMATION"
+        bars = "="*len(header)
+
+        extras = '\n'.join('holoviews[%s]' % e for e in setup_args['extras_require'])
+
+        print("%s\n%s\n%s" % (bars, header, bars))
+
+        print("\nHoloViews supports the following installation types:\n")
+        print("%s\n" % extras)
+        print("Users should consider using one of these options.\n")
+        print("By default only a core installation is performed and ")
+        print("only the minimal set of dependencies are fetched.\n\n")
+        print("For more information please visit http://holoviews.org/install.html\n")
+        print(bars+'\n')
 
     setup(**setup_args)
 
