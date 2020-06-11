@@ -186,48 +186,40 @@ extras_require['build'] = [
 extras_require['all'] = list(set(extras_require['unit_tests']) | set(extras_require['nbtests']))
 
 setup_args = dict(
-    name='panel',
-    version=get_setup_version("panel"),
-    description='A high level app and dashboarding solution for Python.',
+    name='holoviews',
+    version=get_setup_version("holoviews"),
+    description='Stop plotting your data - annotate your data and let it visualize itself.',
     long_description=open('README.md').read() if os.path.isfile('README.md') else 'Consult README.md',
     long_description_content_type="text/markdown",
-    author="HoloViz",
-    author_email="developers@holoviz.org",
-    maintainer="HoloViz",
-    maintainer_email="developers@holoviz.org",
+    author="Jean-Luc Stevens and Philipp Rudiger",
+    author_email="holoviews@gmail.com",
+    maintainer="PyViz Developers",
+    maintainer_email="developers@pyviz.org",
     platforms=['Windows', 'Mac OS X', 'Linux'],
     license='BSD',
-    url='http://panel.holoviz.org',
+    url='https://www.holoviews.org',
     cmdclass=_COMMANDS,
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
+        "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
-        "Intended Audience :: Financial and Insurance Industry",
-        "Intended Audience :: Healthcare Industry",
-        "Intended Audience :: Information Technology",
-        "Intended Audience :: Legal Industry",
-        "Intended Audience :: Other Audience",
-        "Intended Audience :: Science/Research",
         "Natural Language :: English",
+        "Framework :: Matplotlib",
         "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Visualization",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Office/Business",
-        "Topic :: Office/Business :: Financial",
         "Topic :: Software Development :: Libraries"],
-    python_requires=">=3.6",
+    python_requires=">=2.7",
     entry_points={
         'console_scripts': [
-            'panel = panel.cli:main'
+            'holoviews = holoviews.util.command:main'
         ]},
     install_requires=install_requires,
     extras_require=extras_require,
@@ -236,7 +228,7 @@ setup_args = dict(
 
 if __name__ == "__main__":
     example_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'panel', 'examples')
+                                'holoviews', 'examples')
 
     if 'develop' not in sys.argv and 'egg_info' not in sys.argv:
         pyct.build.examples(example_path, __file__, force=True)
